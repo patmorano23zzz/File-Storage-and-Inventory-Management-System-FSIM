@@ -5,13 +5,14 @@ export function useAuditLogs(limit = 50) {
   return useQuery({
     queryKey: ['audit_logs', limit],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('audit_logs')
-        .select('*, profiles(full_name)')
-        .order('created_at', { ascending: false })
-        .limit(limit)
+      const { data, error } = await supabase.rpc('list_admin_audit_logs', {
+        p_limit: limit,
+      })
       if (error) throw error
-      return data
+      return (data ?? []).map(log => ({
+        ...log,
+        profiles: log.actor_name ? { full_name: log.actor_name } : null,
+      }))
     },
   })
 }

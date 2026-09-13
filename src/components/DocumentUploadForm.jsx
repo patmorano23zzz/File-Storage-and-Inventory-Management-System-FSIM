@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Loader2, UploadCloud } from 'lucide-react'
 import { useDocumentTypes, useUploadDocument } from '../hooks/useDocuments'
+import AlertMessage from './ui/AlertMessage'
 
 const MAX_MB = 20
 
@@ -95,7 +96,7 @@ export default function DocumentUploadForm({ studentId, onSuccess, onCancel }) {
         Mark as classified (hidden from teachers)
       </label>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+      {error && <AlertMessage>{error}</AlertMessage>}
 
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel}

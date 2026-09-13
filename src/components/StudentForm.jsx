@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import AlertMessage from './ui/AlertMessage'
 
 const GRADE_LEVELS = ['Kinder', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 const STATUSES = ['enrolled', 'transferred', 'graduated', 'dropped']
@@ -79,7 +80,7 @@ export default function StudentForm({ initial, onSubmit, onCancel }) {
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+      {error && <AlertMessage>{error}</AlertMessage>}
 
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel}

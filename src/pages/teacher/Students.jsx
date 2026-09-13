@@ -2,15 +2,19 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, ChevronRight } from 'lucide-react'
 import { useStudents } from '../../hooks/useStudents'
+import { useMyAssignments, studentMatchesAssignments } from '../../hooks/useAssignments'
 import { PageHeader, Badge } from '../../components/ui/index'
 
 export default function TeacherStudents() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const { data: students = [], isLoading } = useStudents(search)
+  const { data: assignments = [], isLoading: assignmentsLoading } = useMyAssignments()
+
+  const assigned = students.filter(s => studentMatchesAssignments(s, assignments))
 
   return (
-    <div>
+    <div className="page-enter">
       <PageHeader title="Student Directory" subtitle="Browse enrolled students" />
 
       <div className="relative mb-4 max-w-sm">
@@ -19,15 +23,17 @@ export default function TeacherStudents() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search name or LRN…"
-          className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full pl-9 pr-3 py-2.5 border border-slate-200 bg-white rounded-xl text-sm shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
         />
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {isLoading ? (
+      <div className="interactive-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        {isLoading || assignmentsLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
-        ) : students.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-400">No students found.</div>
+        ) : assigned.length === 0 ? (
+          <div className="p-8 text-center text-sm text-gray-400">
+            No students found. You only see students in the grade levels &amp; sections assigned to you by the admin.
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -38,7 +44,7 @@ export default function TeacherStudents() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {students.map(s => (
+              {assigned.map(s => (
                 <tr key={s.id} className="hover:bg-gray-50 transition-colors cursor-pointer"
                   onClick={() => navigate(`/teacher/students/${s.id}`)}>
                   <td className="px-4 py-3 font-mono text-xs text-gray-500">{s.lrn}</td>

@@ -87,13 +87,17 @@ export function usePendingCount() {
 export function useSubmitPublicRequest() {
   return useMutation({
     mutationFn: async (payload) => {
-      const { data, error } = await supabase
-        .from('access_requests')
-        .insert({ ...payload, source: 'web', requester_id: null })
-        .select('reference_code')
-        .single()
+      const { data, error } = await supabase.rpc('submit_public_request', {
+        p_requester_name: payload.requester_name,
+        p_relationship: payload.relationship || null,
+        p_contact: payload.contact || null,
+        p_student_lrn: payload.student_lrn,
+        p_student_last_name: payload.student_last_name,
+        p_document_type_id: payload.document_type_id || null,
+        p_purpose: payload.purpose || null,
+      })
       if (error) throw error
-      return data
+      return Array.isArray(data) ? data[0] : data
     },
   })
 }

@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { FileText, Trash2, ExternalLink, Lock, Loader2 } from 'lucide-react'
+import { FileText, Trash2, ExternalLink, Download, Lock, Loader2 } from 'lucide-react'
 import { useDeleteDocument, getSignedUrl } from '../hooks/useDocuments'
 import { useToast } from '../context/ToastContext'
 import { Badge } from './ui/index'
+import Modal from './ui/Modal'
 
 function formatBytes(bytes) {
   if (!bytes) return '—'
@@ -15,13 +16,14 @@ export default function DocumentList({ documents = [], loading, canDelete = true
   const deleteDoc = useDeleteDocument()
   const toast = useToast()
   const [opening, setOpening] = useState(null)
+  const [preview, setPreview] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
 
   async function openFile(doc) {
     setOpening(doc.id)
     try {
       const url = await getSignedUrl(doc.storage_path)
-      window.open(url, '_blank', 'noopener')
+      setPreview({ doc, url })
     } catch (e) {
       toast('Could not open file: ' + e.message, 'error')
     } finally {
@@ -91,6 +93,52 @@ export default function DocumentList({ documents = [], loading, canDelete = true
           </div>
         ))}
       </div>
+
+      {preview && (
+        <Modal title={preview.doc.title} onClose={() => setPreview(null)} size="xl">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-slate-800">{preview.doc.file_name}</p>
+                <p className="text-xs text-slate-500">
+                  {preview.doc.mime_type || 'Document'} · {formatBytes(preview.doc.file_size)}
+                </p>
+              </div>
+              <a
+                href={preview.url}
+                download={preview.doc.file_name}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              >
+                <Download size={15} /> Download
+              </a>
+            </div>
+
+            <div className="flex min-h-[55vh] items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-100 p-2">
+              {preview.doc.mime_type?.startsWith('image/') ? (
+                <img
+                  src={preview.url}
+                  alt={preview.doc.title}
+                  className="max-h-[65vh] max-w-full rounded-lg object-contain"
+                />
+              ) : preview.doc.mime_type === 'application/pdf' ? (
+                <iframe
+                  src={preview.url}
+                  title={preview.doc.title}
+                  className="h-[65vh] w-full rounded-lg bg-white"
+                />
+              ) : (
+                <div className="p-8 text-center">
+                  <FileText size={42} className="mx-auto mb-3 text-blue-500" />
+                  <p className="text-sm font-medium text-slate-800">Preview is not available for this file type.</p>
+                  <p className="mt-1 text-xs text-slate-500">Use the Download button to open the document.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {/* Inline confirm dialog */}
       {confirmDelete && (

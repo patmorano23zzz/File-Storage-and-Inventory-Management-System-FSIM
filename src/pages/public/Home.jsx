@@ -28,9 +28,9 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 lg:py-16">
+    <div className="page-enter max-w-6xl mx-auto px-4 py-10 lg:py-16">
       <div className="grid lg:grid-cols-[1.1fr_.9fr] items-center gap-12 mb-16">
-        <div>
+        <div className="animate-[fadeIn_.6s_ease-out]">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 mb-5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Official school records portal
           </div>
@@ -55,7 +55,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="relative">
+        <div className="relative animate-[floatIn_.7s_.12s_ease-out_both]">
           <div className="absolute -inset-5 bg-blue-100/60 rounded-[2rem] blur-2xl" />
           <div className="relative rounded-3xl bg-slate-900 p-6 lg:p-8 shadow-xl overflow-hidden">
             <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-blue-500/20" />
@@ -84,7 +84,7 @@ export default function Home() {
       </div>
       <div className="grid sm:grid-cols-3 gap-5">
         {features.map(({ icon: Icon, title, desc, to, cta, color }) => (
-          <div key={title} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4 hover:-translate-y-0.5 transition-transform">
+          <div key={title} className="interactive-card bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4">
             <div className={`${color} text-white rounded-xl w-11 h-11 flex items-center justify-center`}>
               <Icon size={22} />
             </div>

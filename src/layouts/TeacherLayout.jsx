@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { BookOpen, Users, FileText, ClipboardList, LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
 
 const navItems = [
   { to: '/teacher',           label: 'Students',    icon: Users, end: true },
@@ -14,6 +15,7 @@ export default function TeacherLayout() {
   const { profile } = useAuth()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [confirmLogout, setConfirmLogout] = useState(false)
 
   async function signOut() {
     await supabase.auth.signOut()
@@ -21,7 +23,7 @@ export default function TeacherLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-slate-100 overflow-hidden">
       <aside className={`
         fixed inset-y-0 left-0 z-40 w-60 bg-gray-900 text-white flex flex-col
         transform transition-transform duration-200
@@ -62,7 +64,7 @@ export default function TeacherLayout() {
           <p className="text-xs text-gray-400 truncate">{profile?.full_name}</p>
           <p className="text-xs text-emerald-400 capitalize mb-3">{profile?.role}</p>
           <button
-            onClick={signOut}
+            onClick={() => setConfirmLogout(true)}
             className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
           >
             <LogOut size={16} /> Sign Out
@@ -78,7 +80,7 @@ export default function TeacherLayout() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 lg:px-6">
+        <header className="bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3 flex items-center gap-3 lg:px-6 shadow-sm">
           <button
             className="lg:hidden text-gray-500 hover:text-gray-700"
             onClick={() => setOpen(o => !o)}
@@ -88,10 +90,20 @@ export default function TeacherLayout() {
           <h2 className="text-sm font-semibold text-gray-700">Teacher Portal</h2>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main className="page-enter flex-1 overflow-y-auto p-4 lg:p-6">
           <Outlet />
         </main>
       </div>
+      {confirmLogout && (
+        <ConfirmDialog
+          title="Sign out?"
+          message="You will need to sign in again to access the teacher portal."
+          confirmLabel="Sign out"
+          onClose={() => setConfirmLogout(false)}
+          onConfirm={signOut}
+          danger
+        />
+      )}
     </div>
   )
 }

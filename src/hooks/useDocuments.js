@@ -24,16 +24,27 @@ export function useAllDocuments(search = '') {
   return useQuery({
     queryKey: [...KEY, 'all', search],
     queryFn: async () => {
-      let q = supabase
-        .from('documents')
-        .select('*, document_types(code, name), students(last_name, first_name, lrn), profiles(full_name)')
-        .order('created_at', { ascending: false })
-      if (search.trim()) {
-        q = q.ilike('title', `%${search}%`)
-      }
-      const { data, error } = await q
+      const { data, error } = await supabase.rpc('list_admin_documents', {
+        p_search: search.trim() || null,
+      })
       if (error) throw error
-      return data
+      return (data ?? []).map(document => ({
+        ...document,
+        document_types: document.document_type_code
+          ? { code: document.document_type_code, name: document.document_type_name }
+          : null,
+        students: document.student_id
+          ? {
+              id: document.student_id,
+              last_name: document.student_last_name,
+              first_name: document.student_first_name,
+              lrn: document.student_lrn,
+              grade_level: document.student_grade_level,
+              section: document.student_section,
+            }
+          : null,
+        profiles: document.uploader_name ? { full_name: document.uploader_name } : null,
+      }))
     },
   })
 }

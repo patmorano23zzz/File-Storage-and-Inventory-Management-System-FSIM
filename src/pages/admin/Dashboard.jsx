@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   }).format(new Date())
 
   return (
-    <div className="max-w-[1400px] mx-auto">
+    <div className="page-enter max-w-[1400px] mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-7">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 mb-2">Registrar workspace</p>

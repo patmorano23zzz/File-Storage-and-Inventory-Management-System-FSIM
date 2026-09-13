@@ -6,13 +6,14 @@ import { PageHeader } from '../../components/ui/index'
 import Modal from '../../components/ui/Modal'
 import DocumentUploadForm from '../../components/DocumentUploadForm'
 import DocumentList from '../../components/DocumentList'
+import AlertMessage from '../../components/ui/AlertMessage'
 
 export default function AdminDocuments() {
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
   const [selectedStudentId, setSelectedStudentId] = useState('')
 
-  const { data: documents = [], isLoading } = useAllDocuments(search)
+  const { data: documents = [], isLoading, isError, error } = useAllDocuments(search)
   const { data: students = [] } = useStudents()
 
   return (
@@ -43,7 +44,8 @@ export default function AdminDocuments() {
         </div>
       </div>
 
-      <DocumentList documents={documents} loading={isLoading} />
+      {isError && <div className="mb-4"><AlertMessage>{`Unable to load documents: ${error.message}`}</AlertMessage></div>}
+      {!isError && <DocumentList documents={documents} loading={isLoading} />}
 
       {modal && (
         <Modal title="Upload Document" onClose={() => setModal(false)} size="md">

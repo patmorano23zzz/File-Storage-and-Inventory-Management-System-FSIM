@@ -11,8 +11,16 @@ from auth.users
 where email = 'replace-with-staff-email@example.com'
 on conflict (id) do nothing;
 
+-- Assign the staff ID used on the login screen. Each staff ID must be unique.
+update public.profiles
+set staff_id = 'ADM-001'
+where id = (
+  select id from auth.users
+  where email = 'replace-with-staff-email@example.com'
+);
+
 -- Verify the row was created:
-select p.id, p.full_name, p.role, p.is_active
+select p.id, p.staff_id, p.full_name, p.role, p.is_active
 from public.profiles p
 join auth.users u on u.id = p.id
 where u.email = 'replace-with-staff-email@example.com';

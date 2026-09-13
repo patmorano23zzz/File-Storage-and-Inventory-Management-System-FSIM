@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import Modal from './ui/Modal'
 import { useDecideRequest } from '../hooks/useRequests'
+import AlertMessage from './ui/AlertMessage'
 
 const actions = {
   approved:  { label: 'Approve',  btn: 'bg-blue-600 hover:bg-blue-700',   noteLabel: 'Note (optional)' },
@@ -48,7 +49,7 @@ export default function RequestDecideModal({ request, action, onClose }) {
           />
         </div>
 
-        {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+        {error && <AlertMessage>{error}</AlertMessage>}
 
         <div className="flex justify-end gap-3">
           <button type="button" onClick={onClose}

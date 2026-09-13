@@ -1,6 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useState } from 'react'
+import ConfirmDialog from './ui/ConfirmDialog'
 
 function Spinner() {
   return (
@@ -11,6 +13,8 @@ function Spinner() {
 }
 
 function NoProfile() {
+  const [confirmLogout, setConfirmLogout] = useState(false)
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="text-center max-w-sm">
@@ -19,12 +23,22 @@ function NoProfile() {
           Your account has no profile record. Contact the school registrar.
         </p>
         <button
-          onClick={() => supabase.auth.signOut().then(() => window.location.replace('/login'))}
+          onClick={() => setConfirmLogout(true)}
           className="text-sm text-blue-600 hover:underline"
         >
           Sign out
         </button>
       </div>
+      {confirmLogout && (
+        <ConfirmDialog
+          title="Sign out?"
+          message="Your account setup is incomplete. Sign out and return to the login screen?"
+          confirmLabel="Sign out"
+          onClose={() => setConfirmLogout(false)}
+          onConfirm={() => supabase.auth.signOut().then(() => window.location.replace('/login'))}
+          danger
+        />
+      )}
     </div>
   )
 }

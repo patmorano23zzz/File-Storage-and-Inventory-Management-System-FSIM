@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { useStudent } from '../../hooks/useStudents'
+import { useMyAssignments, studentMatchesAssignments } from '../../hooks/useAssignments'
 import { useDocuments, useDocumentTypes } from '../../hooks/useDocuments'
 import { useSubmitTeacherRequest } from '../../hooks/useRequests'
 import { useAuth } from '../../context/AuthContext'
@@ -9,6 +10,7 @@ import { Badge } from '../../components/ui/index'
 import Modal from '../../components/ui/Modal'
 import DocumentList from '../../components/DocumentList'
 import { Loader2 } from 'lucide-react'
+import AlertMessage from '../../components/ui/AlertMessage'
 
 function InfoRow({ label, value }) {
   return (
@@ -30,6 +32,7 @@ export default function TeacherStudentDetail() {
   const [error, setError] = useState('')
 
   const { data: student, isLoading } = useStudent(id)
+  const { data: assignments = [], isLoading: assignmentsLoading } = useMyAssignments()
   const { data: documents = [], isLoading: docsLoading } = useDocuments(id)
   const { data: types = [] } = useDocumentTypes()
   const submitRequest = useSubmitTeacherRequest()
@@ -55,8 +58,14 @@ export default function TeacherStudentDetail() {
     }
   }
 
-  if (isLoading) return <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
+  if (isLoading || assignmentsLoading) return <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
   if (!student) return <div className="p-8 text-center text-sm text-red-500">Student not found.</div>
+  if (!studentMatchesAssignments(student, assignments))
+    return (
+      <div className="p-8 text-center text-sm text-gray-500">
+        You are not assigned to this student&apos;s grade level &amp; section, so their records are not visible to you.
+      </div>
+    )
 
   return (
     <div>
@@ -117,7 +126,7 @@ export default function TeacherStudentDetail() {
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
                   placeholder="Reason for requesting this document…" />
               </div>
-              {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+              {error && <AlertMessage>{error}</AlertMessage>}
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => setModal(false)}
                   className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">Cancel</button>

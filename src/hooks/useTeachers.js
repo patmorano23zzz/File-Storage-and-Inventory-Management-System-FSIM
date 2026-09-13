@@ -7,13 +7,9 @@ export function useTeachers() {
   return useQuery({
     queryKey: KEY,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*, auth_user:id(email:email)')
-        .eq('role', 'teacher')
-        .order('full_name')
+      const { data, error } = await supabase.rpc('list_teacher_accounts')
       if (error) throw error
-      return data
+      return data ?? []
     },
   })
 }

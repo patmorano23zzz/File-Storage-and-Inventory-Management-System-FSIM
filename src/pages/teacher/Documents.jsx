@@ -1,19 +1,23 @@
 import { useState } from 'react'
 import { Search } from 'lucide-react'
 import { useAllDocuments } from '../../hooks/useDocuments'
+import { useMyAssignments, studentMatchesAssignments } from '../../hooks/useAssignments'
 import { PageHeader } from '../../components/ui/index'
 import DocumentList from '../../components/DocumentList'
 
 export default function TeacherDocuments() {
   const [search, setSearch] = useState('')
   const { data: documents = [], isLoading } = useAllDocuments(search)
+  const { data: assignments = [], isLoading: assignmentsLoading } = useMyAssignments()
 
-  // RLS already filters classified docs; filter client-side too for safety
-  const visible = documents.filter(d => !d.is_classified)
+  // RLS already filters classified + unassigned docs; filter client-side too for safety
+  const visible = documents.filter(
+    d => !d.is_classified && studentMatchesAssignments(d.students, assignments)
+  )
 
   return (
     <div>
-      <PageHeader title="Documents" subtitle="Non-classified student files" />
+      <PageHeader title="Documents" subtitle="Files from students in your assigned grade levels & sections" />
 
       <div className="relative mb-4 max-w-sm">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -25,7 +29,8 @@ export default function TeacherDocuments() {
         />
       </div>
 
-      <DocumentList documents={visible} loading={isLoading} canDelete={false} />
+      <DocumentList documents={visible} loading={isLoading || assignmentsLoading} canDelete={false} />
     </div>
   )
 }
+

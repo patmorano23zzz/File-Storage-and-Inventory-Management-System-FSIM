@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Search, Loader2, Clock, CheckCircle, XCircle, PackageCheck, Ban } from 'lucide-react'
+import { Search, Loader2, Clock, CheckCircle, XCircle, PackageCheck, Ban, Route } from 'lucide-react'
 import { trackRequest } from '../../hooks/useRequests'
+import AlertMessage from '../../components/ui/AlertMessage'
 
 const statusConfig = {
   pending:   { icon: Clock,        color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-200', label: 'Pending Review' },
@@ -34,28 +35,32 @@ export default function TrackRequest() {
   const cfg = result ? statusConfig[result.status] : null
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Track Your Request</h1>
+    <div className="page-enter max-w-lg mx-auto px-4 py-10 lg:py-14">
+      <div className="mb-8 flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"><Route size={23} /></div>
+        <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600 mb-1">Request status</p>
+        <h1 className="text-2xl font-bold text-slate-900">Track Your Request</h1>
         <p className="text-sm text-gray-500 mt-1">Enter your reference code and the student's last name to check the status.</p>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4 mb-6">
+      <form onSubmit={handleSubmit} className="interactive-card bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-5 mb-6 shadow-sm">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Reference Code *</label>
           <input required value={code} onChange={e => setCode(e.target.value.toUpperCase())}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-slate-200 bg-slate-50 rounded-xl px-4 py-3 text-sm font-mono uppercase tracking-widest focus:outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
             placeholder="e.g. AB12CD34EF" />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Student's Last Name *</label>
           <input required value={lastName} onChange={e => setLastName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-slate-200 bg-slate-50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
             placeholder="dela Cruz" />
         </div>
-        {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+        {error && <AlertMessage>{error}</AlertMessage>}
         <button type="submit" disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors">
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5">
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
           Check Status
         </button>
@@ -69,7 +74,7 @@ export default function TrackRequest() {
       )}
 
       {result && cfg && (
-        <div className={`rounded-2xl border p-6 ${cfg.bg}`}>
+        <div className={`animate-[floatIn_.35s_ease-out] rounded-2xl border p-6 shadow-sm ${cfg.bg}`}>
           <div className={`flex items-center gap-2 font-semibold mb-4 ${cfg.color}`}>
             <cfg.icon size={20} />
             {cfg.label}
