@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/api'
 import { useState } from 'react'
 import ConfirmDialog from './ui/ConfirmDialog'
 

@@ -1,0 +1,12 @@
+# Hostinger / Apache SPA fallback for React Router.
+# Vite copies this file from public/ into dist/ during the production build.
+Options -MultiViews
+RewriteEngine On
+
+# Keep real files and directories available (assets, favicon, etc.).
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Let React Router handle application routes.
+RewriteRule ^ index.html [L]

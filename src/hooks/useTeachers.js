@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/api'
 
 const KEY = ['teachers']
 
@@ -18,7 +18,7 @@ export function useCreateTeacher() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ email, password, full_name }) => {
-      // Use admin API via supabase edge — we call signUp then update role via profiles
+      // Use the server-side teacher creation endpoint.
       const { data, error } = await supabase.auth.admin.createUser({
         email,
         password,

@@ -46,7 +46,7 @@ export default function AdminStudents() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : error ? (

@@ -11,7 +11,7 @@ export default function TeacherMyRequests() {
         subtitle="Status updates in real time"
       />
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : requests.length === 0 ? (

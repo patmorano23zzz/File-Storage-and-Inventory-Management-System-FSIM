@@ -65,7 +65,7 @@ export default function AuditLogs() {
     <div>
       <PageHeader title="Audit Logs" subtitle="All system actions are recorded here" />
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : isError ? (

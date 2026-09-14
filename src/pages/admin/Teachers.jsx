@@ -4,7 +4,7 @@ import { useTeachers, useToggleTeacherActive } from '../../hooks/useTeachers'
 import { PageHeader, Badge } from '../../components/ui/index'
 import Modal from '../../components/ui/Modal'
 import { useToast } from '../../context/ToastContext'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../lib/api'
 import { useQueryClient } from '@tanstack/react-query'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import PasswordInput from '../../components/ui/PasswordInput'
@@ -78,7 +78,7 @@ function AssignmentsModal({ teacher }) {
       )}
 
       <form onSubmit={handleAdd} className="border-t border-gray-100 pt-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Grade Level *</label>
             <select required value={grade} onChange={e => setGrade(e.target.value)}
@@ -222,7 +222,7 @@ export default function AdminTeachers() {
         }
       />
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : isError ? (

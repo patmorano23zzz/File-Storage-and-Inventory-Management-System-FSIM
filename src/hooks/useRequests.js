@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/api'
 
 const KEY = ['access_requests']
 

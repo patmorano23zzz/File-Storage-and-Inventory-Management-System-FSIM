@@ -46,7 +46,7 @@ export default function StudentForm({ initial, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {field('LRN', 'lrn', 'text', true)}
         {field('Birth Date', 'birth_date', 'date')}
         {field('Last Name', 'last_name', 'text', true)}
@@ -82,13 +82,13 @@ export default function StudentForm({ initial, onSubmit, onCancel }) {
 
       {error && <AlertMessage>{error}</AlertMessage>}
 
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-2">
         <button type="button" onClick={onCancel}
-          className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+          className="w-full sm:w-auto px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
           Cancel
         </button>
         <button type="submit" disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+          className="w-full sm:w-auto justify-center flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
           {loading && <Loader2 size={14} className="animate-spin" />}
           Save
         </button>

@@ -27,7 +27,7 @@ export default function TeacherStudents() {
         />
       </div>
 
-      <div className="interactive-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="table-scroll interactive-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
         {isLoading || assignmentsLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : assigned.length === 0 ? (

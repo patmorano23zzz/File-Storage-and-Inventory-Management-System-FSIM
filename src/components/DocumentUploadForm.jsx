@@ -58,8 +58,8 @@ export default function DocumentUploadForm({ studentId, onSuccess, onCancel }) {
         <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleFile} />
       </label>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="col-span-full sm:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Document Type *</label>
           <select required value={typeId} onChange={e => setTypeId(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -68,14 +68,14 @@ export default function DocumentUploadForm({ studentId, onSuccess, onCancel }) {
           </select>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-full sm:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Title *</label>
           <input required value={title} onChange={e => setTitle(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. Form 137 — Grade 6" />
         </div>
 
-        <div>
+        <div className="sm:col-span-1">
           <label className="block text-xs font-medium text-gray-600 mb-1">School Year</label>
           <input value={schoolYear} onChange={e => setSchoolYear(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -98,13 +98,13 @@ export default function DocumentUploadForm({ studentId, onSuccess, onCancel }) {
 
       {error && <AlertMessage>{error}</AlertMessage>}
 
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-2">
         <button type="button" onClick={onCancel}
-          className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+          className="w-full sm:w-auto px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
           Cancel
         </button>
         <button type="submit" disabled={upload.isPending}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+          className="w-full sm:w-auto justify-center flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
           {upload.isPending && <Loader2 size={14} className="animate-spin" />}
           Upload
         </button>

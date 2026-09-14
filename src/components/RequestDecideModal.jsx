@@ -51,13 +51,13 @@ export default function RequestDecideModal({ request, action, onClose }) {
 
         {error && <AlertMessage>{error}</AlertMessage>}
 
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
           <button type="button" onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            className="w-full sm:w-auto px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
             Cancel
           </button>
           <button type="submit" disabled={decide.isPending}
-            className={`flex items-center gap-2 ${cfg.btn} text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors disabled:opacity-60`}>
+            className={`w-full sm:w-auto justify-center flex items-center gap-2 ${cfg.btn} text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors disabled:opacity-60`}>
             {decide.isPending && <Loader2 size={14} className="animate-spin" />}
             {cfg.label}
           </button>

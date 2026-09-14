@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/api'
 import {
   BookOpen, LayoutDashboard, Users, FileText,
   ClipboardList, ScrollText, LogOut, Menu, X, GraduationCap
@@ -96,7 +96,7 @@ export default function AdminLayout() {
           </button>
           <h2 className="text-sm font-semibold text-gray-700">Registrar / Admin</h2>
         </header>
-        <main className="page-enter flex-1 overflow-y-auto p-4 lg:p-6">
+        <main className="page-enter flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

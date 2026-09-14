@@ -28,24 +28,24 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 py-10 lg:py-16">
-      <div className="grid lg:grid-cols-[1.1fr_.9fr] items-center gap-12 mb-16">
+    <div className="page-enter max-w-6xl mx-auto px-4 py-8 sm:py-10 lg:py-16">
+      <div className="grid lg:grid-cols-[1.1fr_.9fr] items-center gap-8 lg:gap-12 mb-12 lg:mb-16">
         <div className="animate-[fadeIn_.6s_ease-out]">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 mb-5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Official school records portal
           </div>
-          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.08] mb-5">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.08] mb-5">
             Student records, <span className="text-blue-600">handled with care.</span>
           </h1>
           <p className="text-base lg:text-lg text-slate-500 max-w-xl leading-relaxed mb-7">
             Request Form 137, Form 138, certificates, and other school files through one secure,
             paperless workflow. The registrar verifies every request before release.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Link to="/request" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl transition-colors">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link to="/request"             className="inline-flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl transition-colors">
               Request a document <ArrowRight size={17} />
             </Link>
-            <Link to="/track" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold px-5 py-3 rounded-xl transition-colors">
+            <Link to="/track"             className="inline-flex justify-center items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold px-5 py-3 rounded-xl transition-colors">
               Track a request
             </Link>
           </div>
@@ -57,7 +57,7 @@ export default function Home() {
         </div>
         <div className="relative animate-[floatIn_.7s_.12s_ease-out_both]">
           <div className="absolute -inset-5 bg-blue-100/60 rounded-[2rem] blur-2xl" />
-          <div className="relative rounded-3xl bg-slate-900 p-6 lg:p-8 shadow-xl overflow-hidden">
+          <div className="relative rounded-3xl bg-slate-900 p-5 sm:p-6 lg:p-8 shadow-xl overflow-hidden">
             <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-blue-500/20" />
             <div className="relative">
               <div className="flex items-center justify-between mb-8">
