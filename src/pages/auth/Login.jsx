@@ -19,43 +19,46 @@ export default function Login() {
     setError('')
     setLoading(true)
 
-    const normalizedStaffId = staffId.trim().toUpperCase()
-    const { data: loginEmail, error: lookupError } = await supabase
-      .rpc('get_login_email', { p_staff_id: normalizedStaffId })
+    try {
+      const normalizedStaffId = staffId.trim().toUpperCase()
+      const { data: loginEmail, error: lookupError } = await supabase
+        .rpc('get_login_email', { p_staff_id: normalizedStaffId })
 
-    if (lookupError || !loginEmail) {
-      setError('Invalid staff ID or password.')
+      if (lookupError || !loginEmail) {
+        setError('Invalid staff ID or password.')
+        return
+      }
+
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password,
+      })
+
+      if (signInError) {
+        setError(signInError.message)
+        return
+      }
+
+      const { data: profileResult, error: profileError } = await supabase
+        .rpc('get_my_profile')
+      const profile = Array.isArray(profileResult) ? profileResult[0] : profileResult
+
+      if (profileError || !profile) {
+        const detail = profileError?.message ? ` (${profileError.message})` : ''
+        setError(`Could not load your staff profile${detail}`)
+        return
+      }
+
+      // Push into context so protected routes see it immediately
+      setUser(data.user)
+      setProfile(profile)
+
+      navigate(profile.role === 'admin' ? '/admin' : '/teacher', { replace: true })
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to sign in. Please try again.')
+    } finally {
       setLoading(false)
-      return
     }
-
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
-      setLoading(false)
-      return
-    }
-
-    const { data: profileResult, error: profileError } = await supabase
-      .rpc('get_my_profile')
-    const profile = Array.isArray(profileResult) ? profileResult[0] : profileResult
-
-    if (profileError || !profile) {
-      const detail = profileError?.message ? ` (${profileError.message})` : ''
-      setError(`Could not load your staff profile${detail}`)
-      setLoading(false)
-      return
-    }
-
-    // Push into context so protected routes see it immediately
-    setUser(data.user)
-    setProfile(profile)
-
-    navigate(profile.role === 'admin' ? '/admin' : '/teacher', { replace: true })
   }
 
   return (

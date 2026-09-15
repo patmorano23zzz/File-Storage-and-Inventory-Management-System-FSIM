@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import { useRequests } from '../../hooks/useRequests'
 import { PageHeader, Badge } from '../../components/ui/index'
 import RequestDecideModal from '../../components/RequestDecideModal'
+import SortControl, { sortRecords } from '../../components/SortControl'
 
 const TABS = [
   { key: 'pending', label: 'Pending' },
@@ -31,6 +32,7 @@ export default function AdminRequests() {
   const [tab, setTab] = useState('pending')
   const [decide, setDecide] = useState(null)
   const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('created_at:desc')
 
   const { data: allRequests = [], isLoading } = useRequests(tab ? { status: tab } : {})
 
@@ -42,6 +44,7 @@ export default function AdminRequests() {
         r.students?.last_name?.toLowerCase().includes(search.toLowerCase())
       )
     : allRequests
+  const sortedRequests = useMemo(() => sortRecords(requests, ...sort.split(':')), [requests, sort])
 
   return (
     <div>
@@ -56,14 +59,25 @@ export default function AdminRequests() {
             className="pl-8 pr-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
         </div>
       </div>
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-5 w-fit">
-        {TABS.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${tab === t.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            {t.label}
-          </button>
-        ))}
+      <div className="mb-5 flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50/70 p-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1">
+          {TABS.map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)}
+              className={`shrink-0 rounded-lg px-4 py-1.5 text-sm font-medium transition-colors
+                ${tab === t.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex shrink-0 items-center justify-end gap-2">
+          <span className="hidden text-xs font-medium text-gray-500 sm:inline">Sort:</span>
+          <SortControl value={sort} onChange={setSort} options={[
+            { value: 'created_at', label: 'By date' },
+            { value: 'requester_name', label: 'By requester' },
+            { value: 'status', label: 'By status' },
+            { value: 'source', label: 'By source' },
+          ]} />
+        </div>
       </div>
 
       <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -81,7 +95,7 @@ export default function AdminRequests() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {requests.map(r => (
+              {sortedRequests.map(r => (
                 <tr key={r.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-mono text-xs font-bold text-blue-600">{r.reference_code}</td>
                   <td className="px-4 py-3">

@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FileText, Trash2, ExternalLink, Download, Lock, Loader2 } from 'lucide-react'
 import { useDeleteDocument, getSignedUrl } from '../hooks/useDocuments'
 import { useToast } from '../context/ToastContext'
 import { Badge } from './ui/index'
 import Modal from './ui/Modal'
+import SortControl, { sortRecords } from './SortControl'
 
 function formatBytes(bytes) {
   if (!bytes) return '—'
@@ -18,6 +19,8 @@ export default function DocumentList({ documents = [], loading, canDelete = true
   const [opening, setOpening] = useState(null)
   const [preview, setPreview] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
+  const [sort, setSort] = useState('created_at:desc')
+  const sortedDocuments = useMemo(() => sortRecords(documents, ...sort.split(':')), [documents, sort])
 
   async function openFile(doc) {
     setOpening(doc.id)
@@ -51,8 +54,16 @@ export default function DocumentList({ documents = [], loading, canDelete = true
 
   return (
     <>
+      <div className="mb-3 flex justify-end">
+        <SortControl value={sort} onChange={setSort} options={[
+          { value: 'created_at', label: 'Sort by date' },
+          { value: 'title', label: 'Sort by title' },
+          { value: 'school_year', label: 'Sort by school year' },
+          { value: 'file_size', label: 'Sort by file size' },
+        ]} />
+      </div>
       <div className="space-y-2">
-        {documents.map(doc => (
+        {sortedDocuments.map(doc => (
           <div key={doc.id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 hover:border-gray-300 transition-colors">
             <FileText size={20} className="text-blue-500 shrink-0" />
             <div className="flex-1 min-w-0">

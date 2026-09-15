@@ -67,12 +67,14 @@ export function useUploadDocument() {
 
   return useMutation({
     mutationFn: async ({ file, studentId, typeId, title, schoolYear, gradeLevel, isClassified }) => {
-      const ext = file.name.split('.').pop()
       const path = `${studentId}/${Date.now()}_${file.name}`
 
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('student-files')
-        .upload(path, file, { contentType: file.type })
+        .upload(path, file, {
+          contentType: file.type,
+          metadata: { student_id: studentId, type_id: typeId, school_year: schoolYear },
+        })
       if (uploadError) throw uploadError
 
       const { error: dbError } = await supabase.from('documents').insert({
@@ -81,7 +83,7 @@ export function useUploadDocument() {
         title,
         school_year: schoolYear,
         grade_level: gradeLevel,
-        storage_path: path,
+        storage_path: uploadData.path,
         file_name: file.name,
         mime_type: file.type,
         file_size: file.size,

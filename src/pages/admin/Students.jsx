@@ -1,18 +1,21 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, ChevronRight } from 'lucide-react'
 import { useStudents, useUpsertStudent } from '../../hooks/useStudents'
 import { PageHeader, Badge } from '../../components/ui/index'
 import Modal from '../../components/ui/Modal'
 import StudentForm from '../../components/StudentForm'
+import SortControl, { sortRecords } from '../../components/SortControl'
 
 export default function AdminStudents() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(null) // null | { mode: 'add' | 'edit', student? }
+  const [sort, setSort] = useState('last_name:asc')
 
   const { data: students = [], isLoading, error } = useStudents(search)
   const upsert = useUpsertStudent()
+  const sortedStudents = useMemo(() => sortRecords(students, ...sort.split(':')), [students, sort])
 
   async function handleSave(form) {
     await upsert.mutateAsync(form)
@@ -44,6 +47,14 @@ export default function AdminStudents() {
           className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
+      <div className="mb-4 flex justify-end">
+        <SortControl value={sort} onChange={setSort} options={[
+          { value: 'last_name', label: 'Sort by name' },
+          { value: 'grade_level', label: 'Sort by grade' },
+          { value: 'status', label: 'Sort by status' },
+          { value: 'created_at', label: 'Sort by date added' },
+        ]} />
+      </div>
 
       {/* Table */}
       <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -63,7 +74,7 @@ export default function AdminStudents() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {students.map(s => (
+              {sortedStudents.map(s => (
                 <tr key={s.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-mono text-xs text-gray-500">{s.lrn}</td>
                   <td className="px-4 py-3 font-medium text-gray-900">

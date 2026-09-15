@@ -8,6 +8,7 @@ import { useRequests } from '../../hooks/useRequests'
 import { useAllDocuments } from '../../hooks/useDocuments'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import SortControl, { sortRecords } from '../../components/SortControl'
 
 function StatCard({ icon: Icon, label, value, detail, color }) {
   return (
@@ -28,15 +29,24 @@ export default function AdminDashboard() {
   const { profile } = useAuth()
   const navigate = useNavigate()
   const [activityFilter, setActivityFilter] = useState('all')
+  const [requestSort, setRequestSort] = useState('created_at:desc')
+  const [documentSort, setDocumentSort] = useState('created_at:desc')
   const { data: stats } = useDashboardStats()
   const { data: pending = [], isLoading: requestsLoading } = useRequests({ status: 'pending' })
   const { data: documents = [], isLoading: documentsLoading } = useAllDocuments()
-  const recentDocuments = documents.slice(0, 5)
+  const recentDocuments = useMemo(
+    () => sortRecords(documents, ...documentSort.split(':')).slice(0, 5),
+    [documents, documentSort],
+  )
   const filteredRequests = useMemo(() => {
     if (activityFilter === 'web') return pending.filter(request => request.source === 'web')
     if (activityFilter === 'teacher') return pending.filter(request => request.source === 'teacher')
     return pending
   }, [activityFilter, pending])
+  const sortedRequests = useMemo(
+    () => sortRecords(filteredRequests, ...requestSort.split(':')),
+    [filteredRequests, requestSort],
+  )
   const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
   const today = new Intl.DateTimeFormat('en-PH', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -85,6 +95,13 @@ export default function AdminDashboard() {
               </button>
             ))}
           </div>
+          <div className="px-5 pt-3 flex justify-end">
+            <SortControl value={requestSort} onChange={setRequestSort} options={[
+              { value: 'created_at', label: 'Sort requests by date' },
+              { value: 'requester_name', label: 'Sort requests by name' },
+              { value: 'source', label: 'Sort requests by source' },
+            ]} />
+          </div>
           <div className="p-5">
             {requestsLoading ? <div className="py-10 text-center text-sm text-slate-400">Loading queue…</div> : filteredRequests.length === 0 ? (
               <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-7 text-center">
@@ -94,7 +111,7 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="space-y-2">
-                {filteredRequests.slice(0, 5).map(request => (
+                {sortedRequests.slice(0, 5).map(request => (
                   <button key={request.id} onClick={() => navigate('/admin/requests')} className="w-full text-left flex items-center gap-3 rounded-xl border border-slate-100 px-3.5 py-3 hover:border-blue-200 hover:bg-blue-50/40 transition-colors">
                     <div className="h-9 w-9 shrink-0 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><Clock3 size={17} /></div>
                     <div className="min-w-0 flex-1">
@@ -140,6 +157,13 @@ export default function AdminDashboard() {
             <p className="text-xs text-slate-400 mt-0.5">Latest documents secured in the inventory</p>
           </div>
           <button onClick={() => navigate('/admin/documents')} className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600">Browse inventory <ArrowUpRight size={15} /></button>
+        </div>
+        <div className="px-5 pt-3 flex justify-end">
+          <SortControl value={documentSort} onChange={setDocumentSort} options={[
+            { value: 'created_at', label: 'Sort files by date' },
+            { value: 'title', label: 'Sort files by title' },
+            { value: 'school_year', label: 'Sort files by school year' },
+          ]} />
         </div>
         {documentsLoading ? <div className="p-8 text-center text-sm text-slate-400">Loading inventory…</div> : recentDocuments.length === 0 ? (
           <div className="p-8 text-center text-sm text-slate-400"><FileCheck2 className="mx-auto mb-2 text-slate-300" size={23} />No files uploaded yet.</div>

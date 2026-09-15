@@ -12,8 +12,9 @@ frontend locally; Node.js is not required on the hosting account.
 1. Create an InfinityFree account and an `ixdb_...` MySQL database.
 2. Open phpMyAdmin from the InfinityFree control panel and import
    [`schema.sql`](./schema.sql).
-3. Copy `api/config.php` to `api/config.local.php` and use the exact MySQL
-   host, database name, username, and password shown in the control panel.
+3. Copy `api/config.infinityfree.php.example` to `api/config.local.php` and
+   use the exact MySQL host, database name, username, and password shown in
+   the control panel.
    Do not assume the database host is `localhost`.
 4. Run `npm ci` and `npm run build` locally.
 5. Upload the contents of `dist/` into the account's `htdocs/` directory.
@@ -40,8 +41,10 @@ React application.
    `schema.sql` (optional, preferably remove after import), and `storage/`.
 5. Ensure PHP 8.1+, PDO MySQL, sessions, and HTTPS are enabled.
 
-Create the first admin manually with a PHP password hash (for example
-`password_hash()`), never store a plaintext password in this repository.
+Create the first admin using [`create-admin.sql.example`](./create-admin.sql.example).
+Generate the bcrypt value with PHP's `password_hash()` and replace the
+placeholder before importing it. Never store a plaintext password in this
+repository.
 
 ## Build
 
@@ -54,6 +57,25 @@ The API defaults to `/api/index.php`; set `VITE_API_URL` only when the API is
 deployed at another same-origin path. `public/.htaccess` keeps client-side
 routes working.
 
+## Local development
+
+This is a Vite React frontend with a PHP API, so it is not started by one
+Laravel-style command. Start Apache and MySQL in XAMPP, then you can run:
+
+```text
+npm run dev
+```
+
+`npm run dev` serves only the React frontend. Since this project is inside an
+Apache folder with spaces in its path, use the production-like Apache URL for
+the fully working local app:
+
+```text
+http://localhost/file%20storage%20inventory%20management/
+```
+
+`npm run dev` alone cannot run PHP if Apache is stopped.
+
 ## Free shared-hosting limitations
 
 Hostinger and InfinityFree may limit upload size, execution time, concurrent
@@ -64,8 +86,11 @@ lower PHP limit. Use modest file sizes and test `upload_max_filesize` and
 
 Free hosting is suitable for development, demonstrations, and light testing,
 but should not be treated as the only backup for confidential student records.
-Take independent database and file backups. This MVP uses PHP sessions and
-polling rather than realtime events. Premium hosting can move storage outside
+Administrators can use the **Backup ZIP** button on the Documents page to
+download an archive containing the organized files and a `manifest.json` file.
+Copy that ZIP to an encrypted USB drive or a trusted cloud drive such as
+Google Drive. Keep at least two independent copies and test restoring them.
+This MVP uses PHP sessions and polling rather than realtime events. Premium hosting can move storage outside
 the web root, add object storage, queues, virus scanning, and stronger
 audit/retention controls without changing the frontend contract.
 

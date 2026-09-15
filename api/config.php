@@ -1,8 +1,13 @@
 <?php
+
 declare(strict_types=1);
-// Copy to config.local.php and fill in Hostinger values. Never commit secrets.
-const DB_HOST = 'localhost';
-const DB_NAME = 'replace_me';
-const DB_USER = 'replace_me';
-const DB_PASS = 'replace_me';
+
+// Local XAMPP defaults. For InfinityFree/Hostinger, copy this file to
+// config.local.php and replace all four DB values with the control-panel
+// values. Never upload this file with production credentials.
+const DB_HOST = '127.0.0.1';
+const DB_PORT = '3306';
+const DB_NAME = 'abes_db';
+const DB_USER = 'root';
+const DB_PASS = '';
 const STORAGE_ROOT = __DIR__ . '/../storage';

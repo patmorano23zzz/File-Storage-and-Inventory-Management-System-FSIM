@@ -47,7 +47,7 @@ export const supabase = {
   },
   storage: {
     from: () => ({
-      upload: async (_path, file) => { const form = new FormData(); form.append('file', file); form.append('path', _path); const r = await request('?action=upload', { method: 'POST', body: form }); return { data: r.data, error: null } },
+      upload: async (_path, file, options = {}) => { const form = new FormData(); form.append('file', file); form.append('path', _path); Object.entries(options.metadata || {}).forEach(([key, value]) => form.append(key, value ?? '')); const r = await request('?action=upload', { method: 'POST', body: form }); return { data: r.data, error: null } },
       remove: paths => request('', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete_file', paths }) }),
       createSignedUrl: path => Promise.resolve({ data: { signedUrl: `${API}?action=download&path=${encodeURIComponent(path)}` }, error: null }),
     }),
@@ -55,4 +55,21 @@ export const supabase = {
   channel: () => ({ on: () => ({ subscribe: () => ({}) }) }),
   removeChannel: () => {},
   functions: { invoke: (name, options) => request('', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: name, ...(options?.body || {}) }) }) },
+}
+
+export async function downloadBackup() {
+  const response = await fetch(`${API}?action=backup_download`, { credentials: 'include' })
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}))
+    throw new Error(body.error || 'Backup download failed')
+  }
+  const blob = await response.blob()
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `e-records-backup-${new Date().toISOString().slice(0, 10)}.zip`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
 }

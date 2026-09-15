@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Plus, Loader2, UserCheck, UserX } from 'lucide-react'
 import { useTeachers, useToggleTeacherActive } from '../../hooks/useTeachers'
 import { PageHeader, Badge } from '../../components/ui/index'
@@ -15,6 +15,7 @@ import {
   useRemoveAssignment,
 } from '../../hooks/useAssignments'
 import { Trash2, FolderPlus } from 'lucide-react'
+import SortControl, { sortRecords } from '../../components/SortControl'
 
 const GRADE_LEVELS = ['Kinder', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 
@@ -119,31 +120,19 @@ function CreateTeacherForm({ onClose }) {
     setError('')
     setLoading(true)
     try {
-      // Create via Supabase Auth Admin API
-      const { error } = await supabase.functions.invoke('create-teacher', {
-        body: form,
+      const { error } = await supabase.auth.admin.createUser({
+        email: form.email,
+        password: form.password,
+        staff_id: form.staff_id,
+        full_name: form.full_name,
+        user_metadata: { staff_id: form.staff_id, full_name: form.full_name, role: 'teacher' },
       })
       if (error) throw error
       toast(`Teacher account created for ${form.full_name}.`, 'success')
       qc.invalidateQueries({ queryKey: ['teachers'] })
       onClose()
-    } catch {
-      // Fallback: direct signUp (works if email confirmations are off)
-      try {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email: form.email,
-          password: form.password,
-          options: { data: { staff_id: form.staff_id, full_name: form.full_name, role: 'teacher' } },
-        })
-        if (signUpError) throw signUpError
-        if (data.user) {
-          toast(`Teacher account created for ${form.full_name}.`, 'success')
-          qc.invalidateQueries({ queryKey: ['teachers'] })
-          onClose()
-        }
-      } catch (fallbackErr) {
-        setError(fallbackErr.message)
-      }
+    } catch (err) {
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -197,6 +186,8 @@ export default function AdminTeachers() {
   const [modal, setModal] = useState(false)
   const [confirmToggle, setConfirmToggle] = useState(null)
   const [assignmentsFor, setAssignmentsFor] = useState(null)
+  const [sort, setSort] = useState('full_name:asc')
+  const sortedTeachers = useMemo(() => sortRecords(teachers, ...sort.split(':')), [teachers, sort])
 
   async function handleToggle(teacher) {
     try {
@@ -223,6 +214,13 @@ export default function AdminTeachers() {
       />
 
       <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex justify-end border-b border-gray-100 p-3">
+          <SortControl value={sort} onChange={setSort} options={[
+            { value: 'full_name', label: 'Sort by name' },
+            { value: 'created_at', label: 'Sort by date added' },
+            { value: 'is_active', label: 'Sort by status' },
+          ]} />
+        </div>
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : isError ? (
@@ -241,7 +239,7 @@ export default function AdminTeachers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {teachers.map(t => (
+              {sortedTeachers.map(t => (
                 <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3">
                     <p className="font-medium text-gray-900">{t.full_name}</p>

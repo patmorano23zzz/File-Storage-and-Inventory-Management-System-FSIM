@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, Plus } from 'lucide-react'
+import { Download, Search, Plus, Loader2 } from 'lucide-react'
 import { useAllDocuments } from '../../hooks/useDocuments'
 import { useStudents } from '../../hooks/useStudents'
 import { PageHeader } from '../../components/ui/index'
@@ -7,11 +7,24 @@ import Modal from '../../components/ui/Modal'
 import DocumentUploadForm from '../../components/DocumentUploadForm'
 import DocumentList from '../../components/DocumentList'
 import AlertMessage from '../../components/ui/AlertMessage'
+import { downloadBackup } from '../../lib/api'
 
 export default function AdminDocuments() {
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
   const [selectedStudentId, setSelectedStudentId] = useState('')
+  const [backingUp, setBackingUp] = useState(false)
+
+  async function handleBackup() {
+    setBackingUp(true)
+    try {
+      await downloadBackup()
+    } catch (error) {
+      window.alert(error.message)
+    } finally {
+      setBackingUp(false)
+    }
+  }
 
   const { data: documents = [], isLoading, isError, error } = useAllDocuments(search)
   const { data: students = [] } = useStudents()
@@ -21,14 +34,16 @@ export default function AdminDocuments() {
       <PageHeader
         title="Documents"
         subtitle="All uploaded student files"
-        action={
-          <button
-            onClick={() => setModal(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-          >
+        action={<div className="flex gap-2">
+          <button onClick={handleBackup} disabled={backingUp}
+            className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 disabled:opacity-60 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            {backingUp ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} Backup ZIP
+          </button>
+          <button onClick={() => setModal(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
             <Plus size={16} /> Upload Document
           </button>
-        }
+        </div>}
       />
 
       {/* Filters */}

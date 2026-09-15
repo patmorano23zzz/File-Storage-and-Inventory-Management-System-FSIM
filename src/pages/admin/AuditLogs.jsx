@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Clock3, UserRound, FileText, X } from 'lucide-react'
 import { useAuditLogs } from '../../hooks/useStats'
 import { PageHeader } from '../../components/ui/index'
 import Modal from '../../components/ui/Modal'
+import SortControl, { sortRecords } from '../../components/SortControl'
 
 const actionColor = {
   INSERT: 'bg-green-100 text-green-700',
@@ -59,13 +60,22 @@ function readableDetails(details) {
 export default function AuditLogs() {
   const [limit, setLimit] = useState(50)
   const [selectedLog, setSelectedLog] = useState(null)
+  const [sort, setSort] = useState('created_at:desc')
   const { data: logs = [], isLoading, isError, error } = useAuditLogs(limit)
+  const sortedLogs = useMemo(() => sortRecords(logs, ...sort.split(':')), [logs, sort])
 
   return (
     <div>
       <PageHeader title="Audit Logs" subtitle="All system actions are recorded here" />
 
       <div className="table-scroll bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex justify-end border-b border-gray-100 p-3">
+          <SortControl value={sort} onChange={setSort} options={[
+            { value: 'created_at', label: 'Sort by date' },
+            { value: 'action', label: 'Sort by action' },
+            { value: 'entity', label: 'Sort by record type' },
+          ]} />
+        </div>
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
         ) : isError ? (
@@ -85,7 +95,7 @@ export default function AuditLogs() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {logs.map(log => (
+                {sortedLogs.map(log => (
                   <tr key={log.id} className="hover:bg-gray-50 transition-colors align-top">
                     <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">
                       {new Date(log.created_at).toLocaleString('en-PH')}
