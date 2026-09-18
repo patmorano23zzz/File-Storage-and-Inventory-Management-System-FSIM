@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/api'
 import { useAuth } from '../../context/AuthContext'
-import { ArrowLeft, BookOpen, Loader2, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Loader2, ShieldCheck } from 'lucide-react'
 import PasswordInput from '../../components/ui/PasswordInput'
 import AlertMessage from '../../components/ui/AlertMessage'
+import BrandMark from '../../components/BrandMark'
+import ThemeToggle from '../../components/ThemeToggle'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -63,6 +65,7 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 flex items-center justify-center p-4 sm:p-6">
+      <div className="absolute right-4 top-4"><ThemeToggle /></div>
       <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-600/25 blur-3xl animate-pulse" />
       <div className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl animate-pulse [animation-delay:1.5s]" />
       <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(148,163,184,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,.12)_1px,transparent_1px)] [background-size:36px_36px]" />
@@ -79,12 +82,10 @@ export default function Login() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative mb-4">
             <div className="absolute inset-0 rounded-2xl bg-blue-500/30 blur-lg animate-pulse" />
-            <div className="relative rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3.5 text-white shadow-lg shadow-blue-500/30">
-            <BookOpen size={28} />
-            </div>
+            <BrandMark />
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">e-Records</h1>
-          <p className="mt-1 text-center text-sm text-slate-500">School File Storage & Inventory System</p>
+          <h1 className="sr-only">EduVault</h1>
+          <p className="mt-1 text-center text-sm text-slate-500">Student Records and Document Management System</p>
           <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
             <ShieldCheck size={13} /> Secure staff access
           </div>

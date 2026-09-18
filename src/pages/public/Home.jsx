@@ -61,7 +61,7 @@ export default function Home() {
             <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-blue-500/20" />
             <div className="relative">
               <div className="flex items-center justify-between mb-8">
-                <div><p className="text-xs uppercase tracking-[0.18em] text-blue-300 font-semibold">Secure workspace</p><p className="text-white font-semibold mt-1">e-Records portal</p></div>
+                <div><p className="text-xs uppercase tracking-[0.18em] text-blue-300 font-semibold">Secure workspace</p><p className="text-white font-semibold mt-1">EduVault portal</p></div>
                 <div className="rounded-xl bg-white/10 p-2.5 text-blue-200"><LockKeyhole size={20} /></div>
               </div>
               <div className="space-y-3">

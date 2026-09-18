@@ -2,12 +2,14 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/api'
 import {
-  BookOpen, LayoutDashboard, Users, FileText,
+  LayoutDashboard, Users, FileText,
   ClipboardList, ScrollText, LogOut, Menu, X, GraduationCap
 } from 'lucide-react'
 import { useState } from 'react'
 import { usePendingCount } from '../hooks/useRequests'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
+import BrandMark from '../components/BrandMark'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function AdminLayout() {
   const { profile } = useAuth()
@@ -39,13 +41,10 @@ export default function AdminLayout() {
         lg:relative lg:translate-x-0
       `}>
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-700">
-          <div className="bg-blue-600 rounded-lg p-1.5">
-            <BookOpen size={20} />
-          </div>
           <div>
-            <p className="font-bold text-sm leading-tight">e-Records</p>
-            <p className="text-xs text-gray-400">Admin Portal</p>
+            <BrandMark compact />
           </div>
+          <p className="text-xs text-gray-400">Admin Portal</p>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -95,6 +94,7 @@ export default function AdminLayout() {
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
           <h2 className="text-sm font-semibold text-gray-700">Registrar / Admin</h2>
+          <div className="ml-auto"><ThemeToggle /></div>
         </header>
         <main className="page-enter flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
           <Outlet />
